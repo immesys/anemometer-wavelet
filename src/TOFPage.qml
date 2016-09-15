@@ -5,24 +5,28 @@ import Material.Extras 0.1
 import QtGraphicalEffects 1.0
 import QtQuick.Layouts 1.1
 import QtQuick.Controls 2.0 as Qtc
+import MrPlotter 0.1
+import "mr-plotter-layouts" as MrPlotterLayouts
 //import BOSSWAVE 1.0
 
 Item {
-  id : main
-
-  ColumnLayout {
-    id: maincolumn
-    anchors.fill:parent
-    anchors.leftMargin: 10
-    anchors.rightMargin: 10
-    anchors.topMargin: 10
-    anchors.bottomMargin: 10
+    id : main
+    property var dsource
+    onDsourceChanged : {
+      console.log("dsource is now: ", dsource)
+    }
     //Top controls
     View {
+      id:topcontrols
       elevation: 1
-
-      Layout.preferredHeight: grid.implicitHeight + 20
-      Layout.preferredWidth:main.width-20
+      anchors.top: parent.top
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.leftMargin: 10
+      anchors.rightMargin: 10
+      anchors.topMargin: 10
+      anchors.bottomMargin: 10
+      height: grid.implicitHeight+20
       GridLayout {
         columnSpacing: 10
         rowSpacing: 10
@@ -49,15 +53,13 @@ Item {
           Layout.fillWidth: true
           model: ["Foo", "bar"]
         }
-
-
         Label {
           style: "menu"
           text: "Correctable losses"
         }
         Label {
           style: "title"
-          text: "50000"
+          text: main.dsource.correctable
         }
         Label {
           style: "menu"
@@ -65,77 +67,240 @@ Item {
         }
         Label {
           style: "title"
-          text: "50000"
+          text: main.dsource.uncorrectable
         }
         Label {
           style: "menu"
-          text: "Algorithm state"
+          text: "Total"
         }
         Label {
-          Layout.columnSpan: 3
           style: "title"
-          text: "okay"
+          text: main.dsource.total
         }
-      }
-    }
-    View {
-      elevation: 1
-      Layout.fillHeight: true
-      Layout.preferredWidth:main.width-20
-      ColumnLayout {
-        anchors.leftMargin: 10
-        anchors.rightMargin: 10
-        anchors.topMargin: 10
-        anchors.bottomMargin: 10
-        anchors.fill:parent
-        Label {
-          style: "menu"
+        Rectangle {
+          Layout.columnSpan: 2
           Layout.fillWidth: true
-          text: "Algorithm extra data"
-        }
-        Flickable {
-          clip : true
-          id : flickable
           Layout.fillHeight: true
-          Layout.fillWidth: true
-          contentHeight: ta.contentHeight
-          Qtc.TextArea {
-            id: ta
-            readOnly: true
-            text: "foo0\nfoo1\nfoo2\nfoo3\nfoo4\nfoo5\nfoo6\nfoo7\nfoo8\nfoo9\nfoo10\nfoo11\nfoo12\nfoo13\nfoo14\nfoo15\nfoo16\nfoo17\nfoo18\nfoo19\nfoo20\nfoo21\nfoo22\nfoo23\nfoo24\nfoo25\nfoo26\nfoo27\nfoo28\nfoo29\nfoo30\nfoo31\nfoo32\nfoo33\nfoo34\nfoo35\nfoo36\nfoo37\nfoo38\nfoo39\nfoo40\nfoo41\nfoo42\nfoo43\nfoo44\nfoo45\nfoo46\nfoo47\nfoo48\nfoo49\nfoo50\nfoo51\nfoo52\nfoo53\nfoo54\nfoo55\nfoo56\nfoo57\nfoo58\nfoo59\nfoo60\nfoo61\nfoo62\nfoo63\nfoo64\nfoo65\nfoo66\nfoo67\nfoo68\nfoo69\nfoo70\nfoo71\nfoo72\nfoo73\nfoo74\nfoo75\nfoo76\nfoo77\nfoo78\nfoo79\nfoo80\nfoo81\nfoo82\nfoo83\nfoo84\nfoo85\nfoo86\nfoo87\nfoo88\nfoo89\nfoo90\nfoo91\nfoo92\nfoo93\nfoo94\nfoo95\nfoo96\nfoo97\nfoo98\nfoo99\nfoo100\nfoo101\nfoo102\nfoo103\nfoo104\nfoo105\nfoo106\nfoo107\nfoo108\nfoo109\nfoo110\nfoo111\nfoo112\nfoo113\nfoo114\nfoo115\nfoo116\nfoo117\nfoo118\nfoo119\nfoo120\nfoo121\nfoo122\nfoo123\nfoo124\nfoo125\nfoo126\nfoo127\nfoo128\nfoo129\nfoo130\nfoo131\nfoo132\nfoo133\nfoo134\nfoo135\nfoo136\nfoo137\nfoo138\nfoo139\nfoo140\nfoo141\nfoo142\nfoo143\nfoo144\nfoo145\nfoo146\nfoo147\nfoo148\nfoo149\nfoo150\nfoo151\nfoo152\nfoo153\nfoo154\nfoo155\nfoo156\nfoo157\nfoo158\nfoo159\nfoo160\nfoo161\nfoo162\nfoo163\nfoo164\nfoo165\nfoo166\nfoo167\nfoo168\nfoo169\nfoo170\nfoo171\nfoo172\nfoo173\nfoo174\nfoo175\nfoo176\nfoo177\nfoo178\nfoo179\nfoo180\nfoo181\nfoo182\nfoo183\nfoo184\nfoo185\nfoo186\nfoo187\nfoo188\nfoo189\nfoo190\nfoo191\nfoo192\nfoo193\nfoo194\nfoo195\nfoo196\nfoo197\nfoo198\nfoo199\n"
-            wrapMode: Qtc.TextArea.Wrap
-          }
-          //TODO add text at top of this box
+          color: "blue"
         }
       }
     }
+    //The six edges are 0->1 1->2 2->0 0->3 1->3 2->3
+    //The reverse are   1->0 2->1 0->2 3->0 3->1 3->2
+    property list<Stream> streams : [
+      Stream {
+          id: a0_1
+          dataDensity: false
+          selected: false
+          alwaysConnect: false
+
+          color: "blue"
+          timeOffset: [0, 0]
+          archiver: "local"
+          uuid: "10000000-0000-0000-0000-000000000000"
+      },
+      Stream {
+          id: a1_0
+          dataDensity: false
+          selected: false
+          alwaysConnect: false
+
+          color: "red"
+          timeOffset: [0, 0]
+          archiver: "local"
+          uuid: "10000000-0000-0000-0000-000000000001"
+      },
+      Stream {
+          id: a1_2
+          dataDensity: false
+          selected: false
+          alwaysConnect: false
+
+          color: "blue"
+          timeOffset: [0, 0]
+          archiver: "local"
+          uuid: "10000000-0000-0000-0000-000000000010"
+      },
+      Stream {
+          id: a2_1
+          dataDensity: false
+          selected: false
+          alwaysConnect: false
+
+          color: "red"
+          timeOffset: [0, 0]
+          archiver: "local"
+          uuid: "10000000-0000-0000-0000-000000000011"
+      },
+      Stream {
+          id: a2_0
+          dataDensity: false
+          selected: false
+          alwaysConnect: false
+
+          color: "blue"
+          timeOffset: [0, 0]
+          archiver: "local"
+          uuid: "10000000-0000-0000-0000-000000000020"
+      },
+      Stream {
+          id: a0_2
+          dataDensity: false
+          selected: false
+          alwaysConnect: false
+
+          color: "red"
+          timeOffset: [0, 0]
+          archiver: "local"
+          uuid: "10000000-0000-0000-0000-000000000021"
+      },
+      Stream {
+          id: a0_3
+          dataDensity: false
+          selected: false
+          alwaysConnect: false
+
+          color: "blue"
+          timeOffset: [0, 0]
+          archiver: "local"
+          uuid: "10000000-0000-0000-0000-000000000030"
+      },
+      Stream {
+          id: a3_0
+          dataDensity: false
+          selected: false
+          alwaysConnect: false
+
+          color: "red"
+          timeOffset: [0, 0]
+          archiver: "local"
+          uuid: "10000000-0000-0000-0000-000000000031"
+      },
+      Stream {
+          id: a1_3
+          dataDensity: false
+          selected: false
+          alwaysConnect: false
+
+          color: "blue"
+          timeOffset: [0, 0]
+          archiver: "local"
+          uuid: "10000000-0000-0000-0000-000000000040"
+      },
+      Stream {
+          id: a3_1
+          dataDensity: false
+          selected: false
+          alwaysConnect: false
+
+          color: "red"
+          timeOffset: [0, 0]
+          archiver: "local"
+          uuid: "10000000-0000-0000-0000-000000000041"
+      },
+      Stream {
+          id: a2_3
+          dataDensity: false
+          selected: false
+          alwaysConnect: false
+
+          color: "blue"
+          timeOffset: [0, 0]
+          archiver: "local"
+          uuid: "10000000-0000-0000-0000-000000000050"
+      },
+      Stream {
+          id: a3_2
+          dataDensity: false
+          selected: false
+          alwaysConnect: false
+
+          color: "red"
+          timeOffset: [0, 0]
+          archiver: "local"
+          uuid: "10000000-0000-0000-0000-000000000051"
+      }
+    ]
+    Connections {
+      target: main.dsource
+      onTofChanged: {
+        for (var edge = 0; edge < 6; edge++) {
+          for (var dir = 0; dir < 2; dir++) {
+            //console.log("Data is ", JSON.stringify(main.dsource.htofz[edge][dir]));
+            var uuid = "10000000-0000-0000-0000-0000000000"+edge+dir;
+            console.log("uuid is", uuid);
+            p0.hardcodeLocalData(uuid, main.dsource.htofz[edge][dir]);
+          }
+        }
+        p0.autozoom();
+        ax1.autoscale(p0.timeDomain);
+      }
+    }
+    Component.onCompleted : {
+      console.log("dsource: ",main.dsource)
+    }
+
     GridLayout {
-      columns: 4
+      columns: 3
       id: gl
-      Layout.fillWidth: true
-      Layout.preferredHeight:main.width/4 - 20
+      anchors.top:topcontrols.bottom
+      anchors.left:parent.left
+      anchors.right:parent.right
+      anchors.bottom:parent.bottom
+      anchors.leftMargin: 10
+      anchors.rightMargin: 10
+      anchors.topMargin: 10
+      anchors.bottomMargin: 10
       columnSpacing:10
-      Rectangle {
-        id:a
-        color:"grey"
-        Layout.preferredWidth:(main.width-10)/4 - 10
-        Layout.preferredHeight:Layout.preferredWidth
+      rowSpacing:10
+      View {
+        elevation: 2
+        Layout.preferredWidth:gl.width/3 - 10
+        Layout.preferredHeight:gl.height/2 - 10
+        YAxis {
+            id: ax1
+            dynamicAutoscale: true
+            name: "Count"
+            domain: [0, 2]
+            streamList: [a0_1, a1_0]
+        }
+        MrPlotterLayouts.StandardPlot {
+            id: p0
+            anchors.fill: parent
+            timeZone: "America/Los_Angeles"
+            timeTickPromotion: true
+            timeDomain: [1415643674978, 1415643674979, 469055.0, 469060.0]
+            leftAxisList: [ax1]
+            streamList: [a0_1, a1_0]
+            scrollZoomable: true
+            dataDensityScrollZoomable: false
+        }
       }
       Rectangle {
         color:"green"
-        Layout.preferredWidth:(main.width-10)/4 - 10
-        Layout.preferredHeight:Layout.preferredWidth
+        Layout.preferredWidth:gl.width/3 - 10
+        Layout.preferredHeight:gl.height/2 - 10
       }
       Rectangle {
         color:"blue"
-        Layout.preferredWidth:(main.width-10)/4 - 10
-        Layout.preferredHeight:Layout.preferredWidth
+        Layout.preferredWidth:gl.width/3 - 10
+        Layout.preferredHeight:gl.height/2 - 10
       }
       Rectangle {
         color:"purple"
-        Layout.preferredWidth:(main.width-10)/4 - 10
-        Layout.preferredHeight:Layout.preferredWidth
+        Layout.preferredWidth:gl.width/3 - 10
+        Layout.preferredHeight:gl.height/2 - 10
+      }
+      Rectangle {
+        color:"green"
+        Layout.preferredWidth:gl.width/3 - 10
+        Layout.preferredHeight:gl.height/2 - 10
+      }
+      Rectangle {
+        color:"green"
+        Layout.preferredWidth:gl.width/3 - 10
+        Layout.preferredHeight:gl.height/2 - 10
       }
     }
-  }
+
 }

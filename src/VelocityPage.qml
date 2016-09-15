@@ -8,9 +8,21 @@ import QtQuick.Layouts 1.1
 
 Item {
   id : main
-  Text {
-      text: "Velocity pages"
-      y: 30
-      font.pointSize: 24; font.bold: true
+  property var data
+  ColumnLayout {
+    anchors.fill: parent
+    Button {
+      text: "setvensrc"
+    }
+    Text {
+      text: "uncorrectable: "+main.data.uncorrectable
+    }
+    Text {
+      text: "tof1F: "+main.data.tofz
+    }
+    Text {
+      text: "Htof1F: "+main.data.velz
+    }
   }
+
 }
