@@ -121,8 +121,15 @@ Item {
     Connections {
       target: main.dsource
       onOptChanged: {
+        console.log("got opt change")
         vacombo.model = main.dsource.availableVendorAlgorithm
         scombo.model = main.dsource.availableSensor
+      }
+    }
+    Connections {
+      target: main.dsource
+      onExtradata: {
+        ta.insert(0, msg+"\n")
       }
     }
     Component.onCompleted : {

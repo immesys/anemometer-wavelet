@@ -162,8 +162,10 @@ Item {
             p0.hardcodeLocalData(uuid, main.dsource.htofz[edge][dir]);
           }
         }
+
         p0.autozoom();
-        ax1.autoscale(p0.timeDomain);
+        //p0.timeDomain = [1473949017000,1474078631000,0,0];
+        //ax1.autoscale(p0.timeDomain);
       }
     }
     Component.onCompleted : {
@@ -191,7 +193,7 @@ Item {
             id: ax1
             dynamicAutoscale: true
             name: "Count"
-            domain: [0, 2]
+            domain: [100, 1000]
             streamList: [a0_1, a1_0]
         }
         MrPlotterLayouts.StandardPlot {
@@ -202,7 +204,7 @@ Item {
             timeDomain: [1415643674978, 1415643674979, 469055.0, 469060.0]
             leftAxisList: [ax1]
             streamList: [a0_1, a1_0]
-            scrollZoomable: true
+            scrollZoomable: false
             dataDensityScrollZoomable: false
         }
       }
