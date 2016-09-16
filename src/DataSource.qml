@@ -116,7 +116,7 @@ QtObject {
                case 2:
                  dsource.tofz[2][1] = tof.val;
                  dsource.htofz[2][1].push([0,payload["time"], tof.val]);
-                 if (dsource.htofz[2][1].length > 512 dsource.htofz[2][1].shift();
+                 if (dsource.htofz[2][1].length > 512) dsource.htofz[2][1].shift();
                  break;
                case 3:
                  dsource.tofz[3][0] = tof.val;
