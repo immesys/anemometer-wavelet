@@ -41,7 +41,7 @@ WaveletWindow {
       title : "Velocity"
       VelocityPage {
         anchors.fill: parent
-        data: mwindow.dsource
+        dsource: mwindow.dsource
       }
     }
   }

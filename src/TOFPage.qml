@@ -15,6 +15,9 @@ Item {
     onDsourceChanged : {
       console.log("dsource is now: ", dsource)
     }
+    property int axmin : 100
+    property int axmax : 400
+
     //The six edges are 0->1 1->2 2->0 0->3 1->3 2->3
     //The reverse are   1->0 2->1 0->2 3->0 3->1 3->2
     property list<Stream> streams : [
@@ -151,6 +154,9 @@ Item {
           uuid: "10000000-0000-0000-0000-000000000051"
       }
     ]
+    MrPlotter {
+        id: gmrp
+    }
     Connections {
       target: main.dsource
       onTofChanged: {
@@ -159,11 +165,13 @@ Item {
             //console.log("Data is ", JSON.stringify(main.dsource.htofz[edge][dir]));
             var uuid = "10000000-0000-0000-0000-0000000000"+edge+dir;
           //  console.log("uuid is", uuid);
-            p0.hardcodeLocalData(uuid, main.dsource.htofz[edge][dir]);
+            gmrp.hardcodeLocalData(uuid, main.dsource.htofz[edge][dir]);
           }
         }
-
-        p0.autozoom();
+        for (var i = 0; i < mrpRep.count; i++) {
+          mrpRep.itemAt(i).azoom();
+        }
+        //gmrp.autozoom(pa.streamList);
         //p0.timeDomain = [1473949017000,1474078631000,0,0];
         //ax1.autoscale(p0.timeDomain);
       }
@@ -185,53 +193,62 @@ Item {
       anchors.bottomMargin: 10
       columnSpacing:10
       rowSpacing:10
-      View {
-        elevation: 2
-        Layout.preferredWidth:gl.width/3 - 10
-        Layout.preferredHeight:gl.height/2 - 10
-        YAxis {
-            id: ax1
-            dynamicAutoscale: true
-            name: "Count"
-            domain: [100, 1000]
-            streamList: [a0_1, a1_0]
-        }
-        MrPlotterLayouts.StandardPlot {
-            id: p0
-            anchors.fill: parent
-            timeZone: "America/Los_Angeles"
-            timeTickPromotion: true
-            timeDomain: [1415643674978, 1415643674979, 469055.0, 469060.0]
-            leftAxisList: [ax1]
-            streamList: [a0_1, a1_0]
-            scrollZoomable: false
-            dataDensityScrollZoomable: false
-        }
-      }
-      Rectangle {
-        color:"green"
-        Layout.preferredWidth:gl.width/3 - 10
-        Layout.preferredHeight:gl.height/2 - 10
-      }
-      Rectangle {
-        color:"blue"
-        Layout.preferredWidth:gl.width/3 - 10
-        Layout.preferredHeight:gl.height/2 - 10
-      }
-      Rectangle {
-        color:"purple"
-        Layout.preferredWidth:gl.width/3 - 10
-        Layout.preferredHeight:gl.height/2 - 10
-      }
-      Rectangle {
-        color:"green"
-        Layout.preferredWidth:gl.width/3 - 10
-        Layout.preferredHeight:gl.height/2 - 10
-      }
-      Rectangle {
-        color:"green"
-        Layout.preferredWidth:gl.width/3 - 10
-        Layout.preferredHeight:gl.height/2 - 10
+      Repeater {
+        id:mrpRep
+        //The six edges are 0->1 1->2 2->0 0->3 1->3 2->3
+        //The reverse are   1->0 2->1 0->2 3->0 3->1 3->2
+        model: [
+          {"sta":a0_1,"stb":a1_0},
+          {"sta":a1_2,"stb":a2_1},
+          {"sta":a2_0,"stb":a0_2},
+          {"sta":a0_3,"stb":a3_0},
+          {"sta":a1_3,"stb":a3_1},
+          {"sta":a2_3,"stb":a3_2},
+        ]
+        delegate: View {
+              function azoom() {
+                mrp.autozoom(pa.streamList);
+              }
+              elevation: 2
+              Layout.preferredWidth:gl.width/3 - 10
+              Layout.preferredHeight:gl.height/2 - 10
+
+              /* Mr. Plotter components. */
+
+              YAxisArea {
+                  id: lyaa
+                  anchors.left: parent.left
+                  anchors.top: parent.top
+                  anchors.bottom: parent.bottom
+                  anchors.right: pa.left
+                  height: parent.height
+                  rangeStart: pa.y + pa.height
+                  rangeEnd: pa.y
+                  rightSide: false
+                  axisList: [yaxis]
+              }
+              YAxis {
+                  id: yaxis
+                  dynamicAutoscale: false
+                  name: "Reading"
+                  domain: [axmin, axmax]
+                  streamList: [modelData.sta, modelData.stb]
+              }
+              PlotArea {
+                  id: pa
+                  anchors.fill: parent
+                  anchors.leftMargin: 50
+                  scrollZoomable: false
+                  yAxisAreaList: [lyaa]
+                  streamList: [modelData.sta, modelData.stb]
+              }
+              MrPlotter {
+                  id: mrp
+                  plotList: [pa]
+                  timeZone: "America/Los_Angeles"
+                  timeDomain: [1415643674978, 1415643674979, 469055, 469060]
+              }
+          }
       }
     }
 
