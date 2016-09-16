@@ -22,21 +22,14 @@ View {
         onExtradata: function(msg) {
             ta.insert(0, msg+"\n")
         }
+        onSensorChanged: {
+          ta.text = ""
+        }
+        onVendorAlgorithmChange: {
+          ta.text = ""
+        }
     }
 
-  Flickable {
-    clip : true
-    id : flickable
-    anchors.fill:parent
-    contentHeight: ta.contentHeight
-    Qtc.TextArea {
-      id: ta
-      readOnly: true
-      text: ""
-      wrapMode: Qtc.TextArea.Wrap
-    }
-   //TODO add text at top of this box
-  }
 
 
 }

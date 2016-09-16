@@ -22,9 +22,17 @@ WaveletWindow {
     id : overview
     title : "SASC Anemometer app"
     Tab {
+      title : "Config"
+      ConfigPage {
+        anchors.fill: parent
+        dsource: mwindow.dsource
+      }
+
+    }
+    Tab {
       title : "Time of flight"
       TOFPage {
-        anchors.fill:parent
+        anchors.fill: parent
         dsource: mwindow.dsource
       }
 
@@ -32,14 +40,8 @@ WaveletWindow {
     Tab {
       title : "Velocity"
       VelocityPage {
-        data: mwindow.dsource
-      }
-    }
-    Tab {
-      title: "Extradata"
-      Extradata {
-        dsource: mwindow.dsource
         anchors.fill: parent
+        data: mwindow.dsource
       }
     }
   }

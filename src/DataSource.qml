@@ -76,15 +76,6 @@ QtObject {
   property var subhandle : "none"
   function updateSubscription() {
     console.log("Updating subscription")
-    if (subhandle != "none") {
-      console.log("Doing unsub")
-      BW.unsubscribe(subhandle, function(err) {
-        if (err != ""){
-          console.log("unsubscribe error: ",err)
-        }
-      })
-      subhandle = "none"
-    }
     if (vendorAlgorithm == "") {
       console.log("no vendor/alg")
       return
@@ -103,6 +94,7 @@ QtObject {
       return
     }
     console.log("Actually invoking subscribe")
+    dsource.resetVariables()
     BW.subscribeMsgPack({
       "URI":"ucberkeley/anemometer/data/"+parts[0]+"/"+parts[1]+"/s.anemometer/"+sensor+"/i.anemometerdata/signal/feed",
       "AutoChain":true},
@@ -235,11 +227,26 @@ QtObject {
         if (err != "") {
           console.log("subscription error: ", err)
         } else {
+          if (dsource.subhandle != "none") {
+            console.log("Doing unsub")
+            BW.unsubscribe(dsource.subhandle, function(err) {
+              if (err != ""){
+                console.log("unsubscribe error: ",err)
+              }
+            })
+            dsource.subhandle = "none"
+          } else {
+            console.log("no unsub required")
+          }
           dsource.subhandle = subhandle
+          console.log("set subhandle to: ", dsource.subhandle)
+          dsource.resetVariables()
+          dsource.tofChanged()
+          dsource.velChanged()
         }
       })
   }
-  Component.onCompleted : {
+  function resetVariables() {
     dsource.tofz = []
     dsource.htofz = []
     dsource.hvelX = []
@@ -253,8 +260,21 @@ QtObject {
         dsource.htofz[edge].push([])
       }
     }
+  }
+  Component.onCompleted : {
+    resetVariables()
     updateAvailable()
     console.log("Did data source onComplete")
+    updateSubscription()
+  }
+  onSensorChanged: {
+    console.log("sensor changed")
+    updateAvailable()
+    updateSubscription()
+  }
+  onVendorAlgorithmChanged: {
+    console.log("algorithm changed")
+    updateAvailable()
     updateSubscription()
   }
 }

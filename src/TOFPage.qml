@@ -15,76 +15,6 @@ Item {
     onDsourceChanged : {
       console.log("dsource is now: ", dsource)
     }
-    //Top controls
-    View {
-      id:topcontrols
-      elevation: 1
-      anchors.top: parent.top
-      anchors.left: parent.left
-      anchors.right: parent.right
-      anchors.leftMargin: 10
-      anchors.rightMargin: 10
-      anchors.topMargin: 10
-      anchors.bottomMargin: 10
-      height: grid.implicitHeight+20
-      GridLayout {
-        columnSpacing: 10
-        rowSpacing: 10
-        id: grid
-        anchors.leftMargin: 10
-        anchors.rightMargin: 10
-        anchors.topMargin: 10
-        anchors.bottomMargin: 10
-        anchors.fill:parent
-        columns: 4
-        Label {
-          style: "menu"
-          text: "Algorithm"
-        }
-        Qtc.ComboBox {
-          Layout.fillWidth: true
-          model: ["Foo", "bar"]
-        }
-        Label {
-          style: "menu"
-          text: "Sensor"
-        }
-        Qtc.ComboBox {
-          Layout.fillWidth: true
-          model: ["Foo", "bar"]
-        }
-        Label {
-          style: "menu"
-          text: "Correctable losses"
-        }
-        Label {
-          style: "title"
-          text: main.dsource.correctable
-        }
-        Label {
-          style: "menu"
-          text: "Uncorrectable losses"
-        }
-        Label {
-          style: "title"
-          text: main.dsource.uncorrectable
-        }
-        Label {
-          style: "menu"
-          text: "Total"
-        }
-        Label {
-          style: "title"
-          text: main.dsource.total
-        }
-        Rectangle {
-          Layout.columnSpan: 2
-          Layout.fillWidth: true
-          Layout.fillHeight: true
-          color: "blue"
-        }
-      }
-    }
     //The six edges are 0->1 1->2 2->0 0->3 1->3 2->3
     //The reverse are   1->0 2->1 0->2 3->0 3->1 3->2
     property list<Stream> streams : [
@@ -228,7 +158,7 @@ Item {
           for (var dir = 0; dir < 2; dir++) {
             //console.log("Data is ", JSON.stringify(main.dsource.htofz[edge][dir]));
             var uuid = "10000000-0000-0000-0000-0000000000"+edge+dir;
-            console.log("uuid is", uuid);
+          //  console.log("uuid is", uuid);
             p0.hardcodeLocalData(uuid, main.dsource.htofz[edge][dir]);
           }
         }
@@ -243,7 +173,7 @@ Item {
     GridLayout {
       columns: 3
       id: gl
-      anchors.top:topcontrols.bottom
+      anchors.top:parent.top
       anchors.left:parent.left
       anchors.right:parent.right
       anchors.bottom:parent.bottom
