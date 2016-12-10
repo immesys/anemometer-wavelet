@@ -271,12 +271,12 @@ QtObject {
   }
   onSensorChanged: {
     console.log("sensor changed")
-    updateAvailable()
+    //updateAvailable()
     updateSubscription()
   }
   onVendorAlgorithmChanged: {
     console.log("algorithm changed")
-    updateAvailable()
+    //updateAvailable()
     updateSubscription()
   }
 }
