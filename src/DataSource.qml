@@ -192,6 +192,7 @@ QtObject {
             dsource.velX = vel["x"];
             dsource.velY = vel["y"];
             dsource.velZ = vel["z"];
+            console.log("got ", vel["x"], vel["y"], vel["z"])
             dsource.hvelX.push([0,payload["time"],velX]);
             if (dsource.hvelX.length > 512) dsource.hvelX.shift();
             dsource.hvelY.push([0,payload["time"],velY]);

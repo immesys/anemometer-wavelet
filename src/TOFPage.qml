@@ -160,15 +160,19 @@ Item {
     Connections {
       target: main.dsource
       onTofChanged: {
-        for (var edge = 0; edge < 6; edge++) {
-          for (var dir = 0; dir < 2; dir++) {
-            //console.log("Data is ", JSON.stringify(main.dsource.htofz[edge][dir]));
-            var uuid = "10000000-0000-0000-0000-0000000000"+edge+dir;
-          //  console.log("uuid is", uuid);
-            gmrp.hardcodeLocalData(uuid, main.dsource.htofz[edge][dir]);
-          }
-        }
+        // for (var edge = 0; edge < 6; edge++) {
+        //   for (var dir = 0; dir < 2; dir++) {
+        //     //console.log("Data is ", JSON.stringify(main.dsource.htofz[edge][dir]));
+        //     var uuid = "10000000-0000-0000-0000-0000000000"+edge+dir;
+        //   //  console.log("uuid is", uuid);
+        //     gmrp.hardcodeLocalData(uuid, main.dsource.htofz[edge][dir]);
+        //   }
+        // }
         for (var i = 0; i < mrpRep.count; i++) {
+          var uuid0 = "10000000-0000-0000-0000-0000000000"+i+"0";
+          var uuid1 = "10000000-0000-0000-0000-0000000000"+i+"1";
+          mrpRep.itemAt(i).upd(uuid0, main.dsource.htofz[i][0]);
+          mrpRep.itemAt(i).upd(uuid1, main.dsource.htofz[i][1]);
           mrpRep.itemAt(i).azoom();
         }
         //gmrp.autozoom(pa.streamList);
@@ -208,6 +212,9 @@ Item {
         delegate: View {
               function azoom() {
                 mrp.autozoom(pa.streamList);
+              }
+              function upd(uuid, data) {
+                mrp.hardcodeLocalData(uuid, data);
               }
               elevation: 2
               Layout.preferredWidth:gl.width/3 - 10

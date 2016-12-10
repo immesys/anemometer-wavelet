@@ -15,8 +15,8 @@ Item {
     onDsourceChanged : {
       console.log("dsource is now: ", dsource)
     }
-    property int axmin : 30
-    property int axmax : 50
+    property real axmin : -0.5
+    property real axmax : 0.5
 
     //The six edges are 0->1 1->2 2->0 0->3 1->3 2->3
     //The reverse are   1->0 2->1 0->2 3->0 3->1 3->2
@@ -61,9 +61,9 @@ Item {
     Connections {
       target: main.dsource
       onVelChanged: {
-          gmrp.hardcodeLocalData("20000000-0000-0000-0000-000000000001", main.dsource.hvelX);
-          gmrp.hardcodeLocalData("20000000-0000-0000-0000-000000000002", main.dsource.hvelY);
-          gmrp.hardcodeLocalData("20000000-0000-0000-0000-000000000003", main.dsource.hvelZ);
+          mrpRep.itemAt(0).upd("20000000-0000-0000-0000-000000000001", main.dsource.hvelX);
+          mrpRep.itemAt(1).upd("20000000-0000-0000-0000-000000000002", main.dsource.hvelY);
+          mrpRep.itemAt(2).upd("20000000-0000-0000-0000-000000000003", main.dsource.hvelZ);
           for (var i = 0; i < mrpRep.count; i++) {
             mrpRep.itemAt(i).azoom();
           }
@@ -97,6 +97,9 @@ Item {
         delegate: View {
               function azoom() {
                 mrp.autozoom(pa.streamList);
+              }
+              function upd(uuid, data) {
+                mrp.hardcodeLocalData(uuid, data);
               }
               elevation: 2
               Layout.fillWidth:true
