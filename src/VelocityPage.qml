@@ -73,6 +73,15 @@ Item {
       console.log("dsource: ",main.dsource)
     }
 
+    /* Shared Y Axis for all plots. */
+    YAxis {
+        id: yaxis
+        dynamicAutoscale: true
+        name: "Reading"
+        domain: [axmin, axmax]
+        streamList: [vx, vy, vz]
+    }
+
     RowLayout {
       //columns: 3
       id: gl
@@ -118,13 +127,6 @@ Item {
                   rangeEnd: pa.y
                   rightSide: false
                   axisList: [yaxis]
-              }
-              YAxis {
-                  id: yaxis
-                  dynamicAutoscale: false
-                  name: "Reading"
-                  domain: [axmin, axmax]
-                  streamList: [modelData.sta]
               }
               PlotArea {
                   id: pa
